@@ -171,118 +171,133 @@
     </a-scene>
 
     <script>
-      window.addEventListener("DOMContentLoaded", () => {
-        const sceneEl = document.querySelector("a-scene");
-        const scannedSet = new Set();
-        const counterBox = document.getElementById("item-counter");
-        const counterSpan = document.getElementById("count");
+  window.addEventListener("DOMContentLoaded", () => {
+    const sceneEl = document.querySelector("a-scene");
+    const scannedSet = new Set();
+    const counterBox = document.getElementById("item-counter");
+    const counterSpan = document.getElementById("count");
 
-        // Welcome logic
-        const startButton = document.getElementById("start-button");
-        const welcomeScreen = document.getElementById("welcome-screen");
-        startButton.addEventListener("click", () => {
-          speechSynthesis.getVoices(); // preload
-          welcomeScreen.style.display = "none";
-          sceneEl.style.display = "block";
-        });
+    const startButton = document.getElementById("start-button");
+    const welcomeScreen = document.getElementById("welcome-screen");
+    startButton.addEventListener("click", () => {
+      speechSynthesis.getVoices(); // preload
+      welcomeScreen.style.display = "none";
+      sceneEl.style.display = "block";
+    });
 
-        // Quiz logic (moved up to be defined before scanning)
-        const quizScreen = document.getElementById("quiz-screen");
-        const questionBox = document.getElementById("quiz-question");
-        const optionsBox = document.getElementById("quiz-options");
-        const nextButton = document.getElementById("next-button");
+    const quizScreen = document.getElementById("quiz-screen");
+    const questionBox = document.getElementById("quiz-question");
+    const optionsBox = document.getElementById("quiz-options");
+    const nextButton = document.getElementById("next-button");
 
-        const quizQuestions = [
-          { question: "What ingredient is common in Meiji chocolate?", options: ["Flour", "Sugar", "Salt", "Cheese"], answer: 1 },
-          { question: "Where is the eyedrop from?", options: ["NTU", "NUS", "Harvard", "Yale-NUS"], answer: 3 },
-          { question: "What is special about the tea?", options: ["It’s iced", "It’s hot", "It’s ancient", "It’s green"], answer: 2 },
-          { question: "What's inside the wafer box?", options: ["Chips", "Nothing", "Candy", "More wafers"], answer: 1 },
-          { question: "How many items did you scan?", options: ["1", "2", "3", "4"], answer: 3 }
-        ];
+    const quizQuestions = [
+      { question: "What ingredient is common in Meiji chocolate?", options: ["Flour", "Sugar", "Salt", "Cheese"], answer: 1 },
+      { question: "Where is the eyedrop from?", options: ["NTU", "NUS", "Harvard", "Yale-NUS"], answer: 3 },
+      { question: "What is special about the tea?", options: ["It’s iced", "It’s hot", "It’s ancient", "It’s green"], answer: 2 },
+      { question: "What's inside the wafer box?", options: ["Chips", "Nothing", "Candy", "More wafers"], answer: 1 },
+      { question: "How many items did you scan?", options: ["1", "2", "3", "4"], answer: 3 }
+    ];
 
-        let currentQuestion = 0;
+    let currentQuestion = 0;
+    let answered = false;
 
-        function showQuestion(index) {
-          const q = quizQuestions[index];
-          questionBox.textContent = q.question;
-          optionsBox.innerHTML = "";
+    function showQuestion(index) {
+      const q = quizQuestions[index];
+      answered = false;
+      nextButton.disabled = true;
+      questionBox.textContent = q.question;
+      optionsBox.innerHTML = "";
 
-          q.options.forEach((opt, i) => {
-            const btn = document.createElement("button");
-            btn.textContent = opt;
-            btn.onclick = () => {
-              // Optional: store answer
-            };
-            optionsBox.appendChild(btn);
-          });
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.style.border = "2px solid gray";
+        btn.onclick = () => {
+          if (answered) return;
 
-          nextButton.textContent = (index === quizQuestions.length - 1) ? "Finish" : "Next";
-        }
-
-        nextButton.addEventListener("click", () => {
-          currentQuestion++;
-          if (currentQuestion < quizQuestions.length) {
-            showQuestion(currentQuestion);
+          answered = true;
+          if (i === q.answer) {
+            btn.style.backgroundColor = "lightgreen";
+            btn.style.border = "2px solid green";
+            questionBox.textContent += " ✅ Correct!";
           } else {
-            questionBox.textContent = "🎉 Hooray! Quiz completed!";
-            optionsBox.innerHTML = "";
-            nextButton.style.display = "none";
+            btn.style.backgroundColor = "salmon";
+            btn.style.border = "2px solid red";
+            questionBox.textContent += " ❌ Incorrect!";
           }
-        });
-
-        const showModal = (index) => {
-          document.querySelectorAll(".info-box").forEach(div => div.style.display = "none");
-          const modal = document.getElementById(`modal-${index}`);
-          if (modal) modal.style.display = "block";
+          nextButton.disabled = false;
         };
+        optionsBox.appendChild(btn);
+      });
 
-        const hideModals = () => {
-          document.querySelectorAll(".info-box").forEach(div => div.style.display = "none");
-        };
+      nextButton.textContent = (index === quizQuestions.length - 1) ? "Finish" : "Next";
+    }
 
-        function speakText(text) {
-          const speak = () => {
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = "en-US";
-            speechSynthesis.cancel();
+    nextButton.addEventListener("click", () => {
+      currentQuestion++;
+      if (currentQuestion < quizQuestions.length) {
+        showQuestion(currentQuestion);
+      } else {
+        questionBox.textContent = "🎉 Hooray! Quiz completed!";
+        optionsBox.innerHTML = "";
+        nextButton.style.display = "none";
+      }
+    });
+
+    const showModal = (index) => {
+      document.querySelectorAll(".info-box").forEach(div => div.style.display = "none");
+      const modal = document.getElementById(`modal-${index}`);
+      if (modal) modal.style.display = "block";
+    };
+
+    const hideModals = () => {
+      document.querySelectorAll(".info-box").forEach(div => div.style.display = "none");
+    };
+
+    function speakText(text) {
+      const speak = () => {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "en-US";
+        speechSynthesis.cancel();
+        setTimeout(() => {
+          speechSynthesis.speak(utterance);
+        }, 200);
+      };
+      if (speechSynthesis.getVoices().length === 0) {
+        speechSynthesis.onvoiceschanged = speak;
+      } else {
+        speak();
+      }
+    }
+
+    for (let i = 0; i < 4; i++) {
+      const target = document.getElementById(`target-${i}`);
+      target.addEventListener("targetFound", () => {
+        showModal(i);
+        const text = document.getElementById(`modal-${i}`).innerText;
+        speakText(text);
+
+        if (!scannedSet.has(i)) {
+          scannedSet.add(i);
+          counterSpan.textContent = scannedSet.size;
+          counterBox.style.display = "block";
+
+          if (scannedSet.size === 4) {
             setTimeout(() => {
-              speechSynthesis.speak(utterance);
-            }, 200);
-          };
-          if (speechSynthesis.getVoices().length === 0) {
-            speechSynthesis.onvoiceschanged = speak;
-          } else {
-            speak();
+              sceneEl.style.display = "none";
+              quizScreen.style.display = "flex";
+              showQuestion(0);
+            }, 1000);
           }
-        }
-
-        for (let i = 0; i < 4; i++) {
-          const target = document.getElementById(`target-${i}`);
-          target.addEventListener("targetFound", () => {
-            showModal(i);
-            const text = document.getElementById(`modal-${i}`).innerText;
-            speakText(text);
-
-            if (!scannedSet.has(i)) {
-              scannedSet.add(i);
-              counterSpan.textContent = scannedSet.size;
-              counterBox.style.display = "block";
-
-              if (scannedSet.size === 4) {
-                setTimeout(() => {
-                  sceneEl.style.display = "none";
-                  quizScreen.style.display = "flex";
-                  showQuestion(0);
-                }, 1000);
-              }
-            }
-          });
-
-          target.addEventListener("targetLost", () => {
-            hideModals();
-          });
         }
       });
-    </script>
+
+      target.addEventListener("targetLost", () => {
+        hideModals();
+      });
+    }
+  });
+</script>
+
   </body>
 </html>

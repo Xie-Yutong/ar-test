@@ -9,6 +9,7 @@
       body {
         margin: 0;
         overflow: hidden;
+        font-family: sans-serif;
       }
 
       /* Welcome screen */
@@ -24,7 +25,6 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        font-family: sans-serif;
         text-align: center;
         padding: 20px;
       }
@@ -44,6 +44,7 @@
         cursor: pointer;
       }
 
+      /* Modals */
       .info-box {
         position: fixed;
         top: 10%;
@@ -55,11 +56,24 @@
         box-shadow: 0 0 10px rgba(0,0,0,0.2);
         display: none;
         z-index: 999;
-        font-family: sans-serif;
       }
 
       .info-box h3 {
         margin-top: 0;
+      }
+
+      /* Counter */
+      #item-counter {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background: rgba(255,255,255,0.9);
+        padding: 10px 16px;
+        border-radius: 8px;
+        box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        z-index: 998;
+        font-size: 16px;
+        display: none;
       }
 
       /* Hide scene initially */
@@ -78,19 +92,27 @@
       <button id="start-button">Start</button>
     </div>
 
+    <!-- Unique Item Counter -->
+    <div id="item-counter">
+      Items Found: <span id="count">0</span>/4
+    </div>
+
     <!-- Info Modals -->
     <div id="modal-0" class="info-box">
       <h3>Meiji Chocolate</h3>
       <p>This is a delicious chocolate. It contains sugar, flour, and joy.</p>
     </div>
+
     <div id="modal-1" class="info-box">
       <h3>Eyedrop Info</h3>
       <p>This is eyedrop from Yale-NUS.</p>
     </div>
+
     <div id="modal-2" class="info-box">
       <h3>Hey Tea</h3>
       <p>This tea has been sitting for very long here. Ancient.</p>
     </div>
+
     <div id="modal-3" class="info-box">
       <h3>Wafer</h3>
       <p>idt there is anymore inside, sorry</p>
@@ -113,6 +135,7 @@
       <a-entity mindar-image-target="targetIndex: 3" id="target-3"></a-entity>
     </a-scene>
 
+    <!-- Script -->
     <script>
       window.addEventListener("DOMContentLoaded", () => {
         const sceneEl = document.querySelector("a-scene");
@@ -127,19 +150,31 @@
           document.querySelectorAll(".info-box").forEach(div => div.style.display = "none");
         };
 
+        const scannedSet = new Set();
+        const counterBox = document.getElementById("item-counter");
+        const counterSpan = document.getElementById("count");
+
         sceneEl.addEventListener("targetFound", (e) => {
           const targetId = e.target.id;
+
           if (targetId === "target-0") showModal(0);
           if (targetId === "target-1") showModal(1);
           if (targetId === "target-2") showModal(2);
           if (targetId === "target-3") showModal(3);
+
+          // Count unique
+          if (!scannedSet.has(targetId)) {
+            scannedSet.add(targetId);
+            counterSpan.textContent = scannedSet.size;
+            counterBox.style.display = "block";
+          }
         });
 
         sceneEl.addEventListener("targetLost", () => {
           hideModals();
         });
 
-        // START BUTTON logic
+        // Welcome start
         const startButton = document.getElementById("start-button");
         const welcomeScreen = document.getElementById("welcome-screen");
 

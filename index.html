@@ -2,7 +2,7 @@
   <head>
     <title>Lego AR</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
@@ -54,7 +54,7 @@
         background: white;
         padding: 20px;
         border-radius: 12px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         display: none;
         z-index: 999;
       }
@@ -68,131 +68,8 @@
         position: fixed;
         top: 10px;
         right: 10px;
-        background: rgba(255,255,255,0.9);
+        background: rgba(255, 255, 255, 0.9);
         padding: 10px 16px;
         border-radius: 8px;
-        box-shadow: 0 0 5px rgba(0,0,0,0.2);
-        z-index: 998;
-        font-size: 16px;
-        display: none;
-      }
-
-      /* Hide scene initially */
-      a-scene {
-        display: none;
-      }
-    </style>
-  </head>
-
-  <body>
-
-    <!-- Welcome Screen -->
-    <div id="welcome-screen">
-      <h1>Welcome to Lego AR Game</h1>
-      <p>Scan real-world items to learn fun facts. Once you've found them all, you’ll unlock a quiz!</p>
-      <button id="start-button">Start</button>
-    </div>
-
-    <!-- Unique Item Counter -->
-    <div id="item-counter">
-      Items Found: <span id="count">0</span>/4
-    </div>
-
-    <!-- Info Modals -->
-    <div id="modal-0" class="info-box">
-      <h3>Meiji Chocolate</h3>
-      <p>This is a delicious chocolate. It contains sugar, flour, and joy.</p>
-    </div>
-
-    <div id="modal-1" class="info-box">
-      <h3>Eyedrop Info</h3>
-      <p>This is eyedrop from Yale-NUS.</p>
-    </div>
-
-    <div id="modal-2" class="info-box">
-      <h3>Hey Tea</h3>
-      <p>This tea has been sitting for very long here. Ancient.</p>
-    </div>
-
-    <div id="modal-3" class="info-box">
-      <h3>Wafer</h3>
-      <p>idt there is anymore inside, sorry</p>
-    </div>
-
-    <!-- AR Scene -->
-    <a-scene id="ar-scene"
-      mindar-image="imageTargetSrc: https://Xie-Yutong.github.io/ar-test/targets4.mind; maxTrack: 4" 
-      color-space="sRGB" 
-      renderer="colorManagement: true, physicallyCorrectLights" 
-      vr-mode-ui="enabled: false" 
-      device-orientation-permission-ui="enabled: false">
-      
-      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
-
-      <!-- AR Targets -->
-      <a-entity mindar-image-target="targetIndex: 0" id="target-0"></a-entity>
-      <a-entity mindar-image-target="targetIndex: 1" id="target-1"></a-entity>
-      <a-entity mindar-image-target="targetIndex: 2" id="target-2"></a-entity>
-      <a-entity mindar-image-target="targetIndex: 3" id="target-3"></a-entity>
-    </a-scene>
-
-    <!-- Script -->
-    <script>
-      window.addEventListener("DOMContentLoaded", () => {
-        const sceneEl = document.querySelector("a-scene");
-
-        const showModal = (index) => {
-          document.querySelectorAll(".info-box").forEach(div => div.style.display = "none");
-          const modal = document.getElementById(`modal-${index}`);
-          if (modal) modal.style.display = "block";
-        };
-
-        const hideModals = () => {
-          document.querySelectorAll(".info-box").forEach(div => div.style.display = "none");
-        };
-
-        const scannedSet = new Set();
-const counterBox = document.getElementById("item-counter");
-const counterSpan = document.getElementById("count");
-
-// For each target entity
-for (let i = 0; i < 4; i++) {
-  const target = document.getElementById(`target-${i}`);
-
-  target.addEventListener("targetFound", () => {
-    showModal(i);
-
-      speechSynthesis.cancel(); // Stop any previous speech
-const text = document.getElementById(`modal-${i}`).innerText;
-const utterance = new SpeechSynthesisUtterance(text);
-utterance.lang = "en-US";
-speechSynthesis.speak(utterance);
-
-
-    // Only count once per target
-    if (!scannedSet.has(i)) {
-      scannedSet.add(i);
-      counterSpan.textContent = scannedSet.size;
-      counterBox.style.display = "block";
-    }
-  });
-
-  target.addEventListener("targetLost", () => {
-    hideModals();
-  });
-}
-
-
-        // Welcome start
-        const startButton = document.getElementById("start-button");
-        const welcomeScreen = document.getElementById("welcome-screen");
-
-        startButton.addEventListener("click", () => {
-          welcomeScreen.style.display = "none";
-          sceneEl.style.display = "block";
-        });
-      });
-    </script>
-  </body>
-</html>
+        box-shadow: 0 0 5px rgba(
 

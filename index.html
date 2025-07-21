@@ -11,6 +11,39 @@
         overflow: hidden;
       }
 
+      /* Welcome screen */
+      #welcome-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: white;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-family: sans-serif;
+        text-align: center;
+        padding: 20px;
+      }
+
+      #welcome-screen h1 {
+        font-size: 2em;
+        margin-bottom: 1em;
+      }
+
+      #start-button {
+        padding: 12px 24px;
+        font-size: 1em;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
       .info-box {
         position: fixed;
         top: 10%;
@@ -28,41 +61,52 @@
       .info-box h3 {
         margin-top: 0;
       }
+
+      /* Hide scene initially */
+      a-scene {
+        display: none;
+      }
     </style>
   </head>
 
   <body>
+
+    <!-- Welcome Screen -->
+    <div id="welcome-screen">
+      <h1>Welcome to Lego AR Game</h1>
+      <p>Scan real-world items to learn fun facts. Once you've found them all, you’ll unlock a quiz!</p>
+      <button id="start-button">Start</button>
+    </div>
+
     <!-- Info Modals -->
     <div id="modal-0" class="info-box">
       <h3>Meiji Chocolate</h3>
       <p>This is a delicious chocolate. It contains sugar, flour, and joy.</p>
     </div>
-
     <div id="modal-1" class="info-box">
       <h3>Eyedrop Info</h3>
       <p>This is eyedrop from Yale-NUS.</p>
     </div>
-
     <div id="modal-2" class="info-box">
       <h3>Hey Tea</h3>
       <p>This tea has been sitting for very long here. Ancient.</p>
     </div>
-
     <div id="modal-3" class="info-box">
       <h3>Wafer</h3>
       <p>idt there is anymore inside, sorry</p>
     </div>
 
     <!-- AR Scene -->
-    <a-scene mindar-image="imageTargetSrc: https://Xie-Yutong.github.io/ar-test/targets4.mind; maxTrack: 4" 
-             color-space="sRGB" 
-             renderer="colorManagement: true, physicallyCorrectLights" 
-             vr-mode-ui="enabled: false" 
-             device-orientation-permission-ui="enabled: false">
-             
+    <a-scene id="ar-scene"
+      mindar-image="imageTargetSrc: https://Xie-Yutong.github.io/ar-test/targets4.mind; maxTrack: 4" 
+      color-space="sRGB" 
+      renderer="colorManagement: true, physicallyCorrectLights" 
+      vr-mode-ui="enabled: false" 
+      device-orientation-permission-ui="enabled: false">
+      
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-      <!-- ADD THESE BACK -->
+      <!-- AR Targets -->
       <a-entity mindar-image-target="targetIndex: 0" id="target-0"></a-entity>
       <a-entity mindar-image-target="targetIndex: 1" id="target-1"></a-entity>
       <a-entity mindar-image-target="targetIndex: 2" id="target-2"></a-entity>
@@ -83,7 +127,6 @@
           document.querySelectorAll(".info-box").forEach(div => div.style.display = "none");
         };
 
-        // Listen for target found/lost events
         sceneEl.addEventListener("targetFound", (e) => {
           const targetId = e.target.id;
           if (targetId === "target-0") showModal(0);
@@ -95,9 +138,17 @@
         sceneEl.addEventListener("targetLost", () => {
           hideModals();
         });
+
+        // START BUTTON logic
+        const startButton = document.getElementById("start-button");
+        const welcomeScreen = document.getElementById("welcome-screen");
+
+        startButton.addEventListener("click", () => {
+          welcomeScreen.style.display = "none";
+          sceneEl.style.display = "block";
+        });
       });
     </script>
   </body>
 </html>
-
 

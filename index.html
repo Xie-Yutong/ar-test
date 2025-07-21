@@ -13,7 +13,6 @@
         font-family: sans-serif;
       }
 
-      /* Welcome screen */
       #welcome-screen {
         position: fixed;
         top: 0;
@@ -45,7 +44,6 @@
         cursor: pointer;
       }
 
-      /* Modals */
       .info-box {
         position: fixed;
         top: 10%;
@@ -63,7 +61,6 @@
         margin-top: 0;
       }
 
-      /* Counter */
       #item-counter {
         position: fixed;
         top: 10px;
@@ -77,7 +74,6 @@
         display: none;
       }
 
-      /* Quiz */
       #quiz-screen {
         display: none;
         position: fixed;
@@ -124,14 +120,12 @@
   </head>
 
   <body>
-    <!-- Welcome Screen -->
     <div id="welcome-screen">
       <h1>Welcome to Lego AR Game</h1>
       <p>Scan real-world items to learn fun facts. Once you've found them all, you’ll unlock a quiz!</p>
       <button id="start-button">Start</button>
     </div>
 
-    <!-- Item Counter -->
     <div id="item-counter">
       Items Found: <span id="count">0</span>/4
     </div>
@@ -182,6 +176,59 @@
         const counterBox = document.getElementById("item-counter");
         const counterSpan = document.getElementById("count");
 
+        // Welcome logic
+        const startButton = document.getElementById("start-button");
+        const welcomeScreen = document.getElementById("welcome-screen");
+        startButton.addEventListener("click", () => {
+          speechSynthesis.getVoices(); // preload
+          welcomeScreen.style.display = "none";
+          sceneEl.style.display = "block";
+        });
+
+        // Quiz logic (moved up to be defined before scanning)
+        const quizScreen = document.getElementById("quiz-screen");
+        const questionBox = document.getElementById("quiz-question");
+        const optionsBox = document.getElementById("quiz-options");
+        const nextButton = document.getElementById("next-button");
+
+        const quizQuestions = [
+          { question: "What ingredient is common in Meiji chocolate?", options: ["Flour", "Sugar", "Salt", "Cheese"], answer: 1 },
+          { question: "Where is the eyedrop from?", options: ["NTU", "NUS", "Harvard", "Yale-NUS"], answer: 3 },
+          { question: "What is special about the tea?", options: ["It’s iced", "It’s hot", "It’s ancient", "It’s green"], answer: 2 },
+          { question: "What's inside the wafer box?", options: ["Chips", "Nothing", "Candy", "More wafers"], answer: 1 },
+          { question: "How many items did you scan?", options: ["1", "2", "3", "4"], answer: 3 }
+        ];
+
+        let currentQuestion = 0;
+
+        function showQuestion(index) {
+          const q = quizQuestions[index];
+          questionBox.textContent = q.question;
+          optionsBox.innerHTML = "";
+
+          q.options.forEach((opt, i) => {
+            const btn = document.createElement("button");
+            btn.textContent = opt;
+            btn.onclick = () => {
+              // Optional: store answer
+            };
+            optionsBox.appendChild(btn);
+          });
+
+          nextButton.textContent = (index === quizQuestions.length - 1) ? "Finish" : "Next";
+        }
+
+        nextButton.addEventListener("click", () => {
+          currentQuestion++;
+          if (currentQuestion < quizQuestions.length) {
+            showQuestion(currentQuestion);
+          } else {
+            questionBox.textContent = "🎉 Hooray! Quiz completed!";
+            optionsBox.innerHTML = "";
+            nextButton.style.display = "none";
+          }
+        });
+
         const showModal = (index) => {
           document.querySelectorAll(".info-box").forEach(div => div.style.display = "none");
           const modal = document.getElementById(`modal-${index}`);
@@ -220,7 +267,6 @@
               counterSpan.textContent = scannedSet.size;
               counterBox.style.display = "block";
 
-              // Start quiz if 4/4 items found
               if (scannedSet.size === 4) {
                 setTimeout(() => {
                   sceneEl.style.display = "none";
@@ -230,85 +276,12 @@
               }
             }
           });
+
           target.addEventListener("targetLost", () => {
             hideModals();
           });
         }
-
-        // Welcome screen
-        const startButton = document.getElementById("start-button");
-        const welcomeScreen = document.getElementById("welcome-screen");
-        startButton.addEventListener("click", () => {
-          speechSynthesis.getVoices(); // preload
-          welcomeScreen.style.display = "none";
-          sceneEl.style.display = "block";
-        });
-
-        // Quiz logic
-        const quizScreen = document.getElementById("quiz-screen");
-        const questionBox = document.getElementById("quiz-question");
-        const optionsBox = document.getElementById("quiz-options");
-        const nextButton = document.getElementById("next-button");
-
-        const quizQuestions = [
-          {
-            question: "What ingredient is common in Meiji chocolate?",
-            options: ["Flour", "Sugar", "Salt", "Cheese"],
-            answer: 1
-          },
-          {
-            question: "Where is the eyedrop from?",
-            options: ["NTU", "NUS", "Harvard", "Yale-NUS"],
-            answer: 3
-          },
-          {
-            question: "What is special about the tea?",
-            options: ["It’s iced", "It’s hot", "It’s ancient", "It’s green"],
-            answer: 2
-          },
-          {
-            question: "What's inside the wafer box?",
-            options: ["Chips", "Nothing", "Candy", "More wafers"],
-            answer: 1
-          },
-          {
-            question: "How many items did you scan?",
-            options: ["1", "2", "3", "4"],
-            answer: 3
-          }
-        ];
-
-        let currentQuestion = 0;
-
-        function showQuestion(index) {
-          const q = quizQuestions[index];
-          questionBox.textContent = q.question;
-          optionsBox.innerHTML = "";
-
-          q.options.forEach((opt, i) => {
-            const btn = document.createElement("button");
-            btn.textContent = opt;
-            btn.onclick = () => {
-              // Optional: record selection
-            };
-            optionsBox.appendChild(btn);
-          });
-
-          nextButton.textContent = (index === quizQuestions.length - 1) ? "Finish" : "Next";
-        }
-
-        nextButton.addEventListener("click", () => {
-          currentQuestion++;
-          if (currentQuestion < quizQuestions.length) {
-            showQuestion(currentQuestion);
-          } else {
-            questionBox.textContent = "🎉 Hooray! Quiz completed!";
-            optionsBox.innerHTML = "";
-            nextButton.style.display = "none";
-          }
-        });
       });
     </script>
   </body>
 </html>
-

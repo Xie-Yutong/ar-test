@@ -161,6 +161,12 @@ for (let i = 0; i < 4; i++) {
   target.addEventListener("targetFound", () => {
     showModal(i);
 
+      const text = document.getElementById(`modal-${i}`).innerText;
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "en-US";
+  speechSynthesis.cancel();
+  speechSynthesis.speak(utterance);
+
     // Only count once per target
     if (!scannedSet.has(i)) {
       scannedSet.add(i);

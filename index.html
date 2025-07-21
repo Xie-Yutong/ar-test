@@ -2,6 +2,7 @@
   <head>
     <title>Lego AR</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
@@ -161,11 +162,12 @@ for (let i = 0; i < 4; i++) {
   target.addEventListener("targetFound", () => {
     showModal(i);
 
-      const text = document.getElementById(`modal-${i}`).innerText;
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "en-US";
-  speechSynthesis.cancel();
-  speechSynthesis.speak(utterance);
+      speechSynthesis.cancel(); // Stop any previous speech
+const text = document.getElementById(`modal-${i}`).innerText;
+const utterance = new SpeechSynthesisUtterance(text);
+utterance.lang = "en-US";
+speechSynthesis.speak(utterance);
+
 
     // Only count once per target
     if (!scannedSet.has(i)) {

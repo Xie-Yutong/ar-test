@@ -34,17 +34,27 @@
   <body>
     <!-- Info Modals -->
     <div id="modal-0" class="info-box">
-      <h3>Donut Info</h3>
-      <p>This is a delicious donut. It contains sugar, flour, and joy.</p>
+      <h3>Meiji CHocolate</h3>
+      <p>This is a delicious chocolate. It contains sugar, flour, and joy.</p>
     </div>
 
     <div id="modal-1" class="info-box">
-      <h3>Pizza Info</h3>
-      <p>This is a pizza. It has cheese, tomato, and toppings of your dreams.</p>
+      <h3>Eyedrop info</h3>
+      <p>This is eyedrop from yale-NUS.</p>
+    </div>
+
+    <div id="modal-2" class="info-box">
+      <h3>Hey TEa</h3>
+      <p>This tea has been sitting for very long here. Ancient.</p>
+    </div>
+
+    <div id="modal-3" class="info-box">
+      <h3>Wafer</h3>
+      <p>idt there is anymore inside, sorry</p>
     </div>
 
     <!-- AR Scene -->
-    <a-scene mindar-image="imageTargetSrc: https://Xie-Yutong.github.io/ar-test/targets4.mind; maxTrack: 2" 
+    <a-scene mindar-image="imageTargetSrc: https://Xie-Yutong.github.io/ar-test/targets4.mind; maxTrack: 4" 
              color-space="sRGB" 
              renderer="colorManagement: true, physicallyCorrectLights" 
              vr-mode-ui="enabled: false" 
@@ -73,6 +83,8 @@
           const targetId = e.target.id;
           if (targetId === "target-0") showModal(0);
           if (targetId === "target-1") showModal(1);
+          if (targetId === "target-2") showModal(2);
+          if (targetId === "target-3") showModal(3);
         });
 
         sceneEl.addEventListener("targetLost", () => {
